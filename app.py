@@ -3,9 +3,6 @@
 from __future__ import annotations
 
 import json
-import os
-import subprocess
-import sys
 import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
@@ -39,8 +36,10 @@ class QuestionBoxApp(tk.Tk):
 
     def _configure_style(self) -> None:
         style = ttk.Style(self)
-        available = style.theme_names()
-        style.theme_use("aqua" if sys.platform == "darwin" and "aqua" in available else "clam")
+        # Use the same renderer on every OS. The native macOS theme can ignore
+        # custom foreground colors, which may produce white text on a light
+        # button when the system appearance and this light UI do not match.
+        style.theme_use("clam")
         style.configure("App.TFrame", background="#f5f5f7")
         style.configure("Card.TFrame", background="#ffffff")
         style.configure("Title.TLabel", background="#f5f5f7", foreground="#1d1d1f", font=("TkDefaultFont", 24, "bold"))
@@ -48,9 +47,57 @@ class QuestionBoxApp(tk.Tk):
         style.configure("CardTitle.TLabel", background="#ffffff", foreground="#1d1d1f", font=("TkDefaultFont", 15, "bold"))
         style.configure("Body.TLabel", background="#ffffff", foreground="#3a3a3c", font=("TkDefaultFont", 11))
         style.configure("Muted.TLabel", background="#ffffff", foreground="#6e6e73", font=("TkDefaultFont", 10))
-        style.configure("Primary.TButton", font=("TkDefaultFont", 11, "bold"), padding=(18, 10))
-        style.configure("Secondary.TButton", font=("TkDefaultFont", 11), padding=(14, 9))
-        style.configure("Nav.TButton", font=("TkDefaultFont", 11, "bold"), padding=(14, 8))
+        style.configure(
+            "Primary.TButton",
+            font=("TkDefaultFont", 11, "bold"),
+            padding=(18, 10),
+            foreground="#ffffff",
+            background="#0071e3",
+            bordercolor="#0071e3",
+            lightcolor="#0071e3",
+            darkcolor="#0071e3",
+            focuscolor="#0071e3",
+        )
+        style.map(
+            "Primary.TButton",
+            foreground=[("disabled", "#e8e8ed"), ("pressed", "#ffffff"), ("active", "#ffffff")],
+            background=[("disabled", "#8e8e93"), ("pressed", "#004f9e"), ("active", "#0077ed")],
+            bordercolor=[("pressed", "#004f9e"), ("active", "#0077ed")],
+        )
+        style.configure(
+            "Secondary.TButton",
+            font=("TkDefaultFont", 11),
+            padding=(14, 9),
+            foreground="#1d1d1f",
+            background="#e8e8ed",
+            bordercolor="#d2d2d7",
+            lightcolor="#e8e8ed",
+            darkcolor="#e8e8ed",
+            focuscolor="#e8e8ed",
+        )
+        style.map(
+            "Secondary.TButton",
+            foreground=[("disabled", "#6e6e73"), ("pressed", "#000000"), ("active", "#000000")],
+            background=[("disabled", "#f2f2f7"), ("pressed", "#c7c7cc"), ("active", "#dedee3")],
+            bordercolor=[("pressed", "#8e8e93"), ("active", "#aeaeb2")],
+        )
+        style.configure(
+            "Nav.TButton",
+            font=("TkDefaultFont", 11, "bold"),
+            padding=(14, 8),
+            foreground="#0057b8",
+            background="#f5f5f7",
+            bordercolor="#aeaeb2",
+            lightcolor="#f5f5f7",
+            darkcolor="#f5f5f7",
+            focuscolor="#f5f5f7",
+        )
+        style.map(
+            "Nav.TButton",
+            foreground=[("pressed", "#003d80"), ("active", "#003d80")],
+            background=[("pressed", "#dcdce1"), ("active", "#e8e8ed")],
+            bordercolor=[("pressed", "#6e6e73"), ("active", "#8e8e93")],
+        )
         style.configure("Treeview", rowheight=42, font=("TkDefaultFont", 11), background="#ffffff", fieldbackground="#ffffff", foreground="#1d1d1f")
         style.configure("Treeview.Heading", font=("TkDefaultFont", 10, "bold"), padding=(10, 8))
 
